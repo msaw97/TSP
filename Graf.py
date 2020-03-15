@@ -15,6 +15,9 @@ class Graf():
     def __str__(self):
         return str(self.G)
 
+    def __getitem__(self, item):
+        return self.G[item]
+
     def __iter__(self):
         for i in self.G:
             yield i
