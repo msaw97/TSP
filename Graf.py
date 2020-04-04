@@ -32,7 +32,7 @@ class Graf():
         """Usuwa krawedz z u do v"""
         self.addE(u,v, 0)
 
-    def getW(self, u, v):
+    def getWeight(self, u, v):
         """Zwraca wage krawedzi z wierzcholka u do v."""
         return self.G[u-1,v-1]
 
@@ -41,7 +41,7 @@ class Graf():
         routeWeight =[]
 
         for r in range(len(route)-1):
-            routeWeight.append(self.getW(route[r], route[r+1]))
+            routeWeight.append(self.getWeight(route[r], route[r+1]))
 
         return sum(routeWeight)
 
@@ -61,5 +61,5 @@ if __name__ == "__main__":
     G.addE(3,3,4)
     G.removeE(1,4)
     print(G)
-    print(G.getW(2,1))
+    print(G.getWeight(2,1))
     print(G.full_randomize())

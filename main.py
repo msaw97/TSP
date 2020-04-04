@@ -1,6 +1,7 @@
 import numpy as np
 from itertools import permutations
-from Graf import Graf
+import Graf
+import time
 
 def brute_force(G):
     """Rozwiazuje TSP metoda sprawdzenia wszyskich mozliwosci"""
@@ -25,7 +26,7 @@ def brute_force(G):
 def nearest_neighbour(G):
     bestRoute = [0 for n in range(G.n)]
     current = 0
-    visited = [0]
+    visited = [current]
 
     for i in range(G.n):
 
@@ -44,13 +45,49 @@ def nearest_neighbour(G):
 
     return bestRoute
 
-G = Graf(8)
-G.full_randomize()
-print(G)
+def smallest_edge(G):
+    queue = []
+    bestRoute = []
 
+    #tworzy liste krawedzi wraz z ich wagami
+    for n in range(0, G.n -1):
+        min = [n+1, 0, G[n][n+1]]
+        for j, k in enumerate( G[n][n+1:], n):
+            min[1] = j+2
+            min[2] = k
+            queue.append(tuple(min))
+
+    #sortowanie kolejki rosnaco wedlug wag
+    queue = sorted(queue, key = lambda x: x[2])
+
+    #sprawdza czy dołączenie tej krawędzi do rozwiązania nie spowoduje utworzenia cyklu i tworzy rozwiazanie
+    while len(bestRoute) != G.n:
+        edge = queue.pop(0)
+        if edge[0] not in bestRoute:
+            bestRoute.append(edge[0])
+        if edge[1] not in bestRoute:
+            bestRoute.append(edge[1])
+
+    #przesuwa liste rozwiazania tak aby wierzcholek 1 znalazl sie na jej poczatku
+    while bestRoute[0] != 1:
+        bestRoute = [bestRoute[-1]] + bestRoute[:-1]
+
+    bestRoute.append(bestRoute[0])
+
+    return bestRoute
+
+G = Graf.Graf(7)
+G.full_randomize()
+
+print("Najkrotsza sciezka problemu TSP.")
+start =   time.time()
 bR_BF, bRW_BF = brute_force(G)
-print("\nNajkrotsza sciezka problemu TSP, metoda brute force: {}. Laczna waga krawedzi: {}.".format(bR_BF, bRW_BF))
+print("Algorytm typu brute force: {}. Laczna waga krawedzi: {}.".format(bR_BF, bRW_BF))
 
 bR_NN = nearest_neighbour(G)
 bRW_NN = G.getRouteWeight(bR_NN)
-print("\nNajkrotsza sciezka problemu TSP, metoda najblizszego sasiada: {}. Laczna waga krawedzi: {}.".format(bR_NN, bRW_NN))
+print("Algorytm najblizszego sasiada: {}. Laczna waga krawedzi: {}.".format(bR_NN, bRW_NN))
+
+bR_SE = smallest_edge(G)
+bRW_SE = G.getRouteWeight(bR_SE)
+print("Algorytm najmniejszej krawedzi: {}. Laczna waga krawedzi: {}.".format(bR_SE, bRW_SE))
