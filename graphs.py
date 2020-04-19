@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 
-class Graf():
-    """Reprezentacja grafu nieskierowanego w postaci macierzy sasiedztwa."""
+
+class GraphAdjacencyMatrix():
+    """Reprezentacja grafu nieskierowanego w postaci macierzy sąsiedztwa."""
     def __init__(self, n):
         self.G = np.zeros((n,n))
         self.n = n
@@ -64,7 +67,7 @@ class Graf():
         return self.G
 
 
-class Graf_adjlist():
+class GraphAdjacencyList():
     """Reprezentacja grafu nieskierowanego w postaci listy sąsiedztwa."""
 
     def __init__(self, vertices):
@@ -186,7 +189,7 @@ class Edge():
 
 
 if __name__ == "__main__":
-    G = Graf(7)
+    G = GraphAdjacencyMatrix(7)
     G.addE(0,2,6)
     G.addE(1,4,5)
     G.addE(3,3,4)
