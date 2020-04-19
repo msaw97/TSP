@@ -30,6 +30,6 @@ bRW_SE = G.getRouteWeight(bR_SE)
 print("\nAlgorytm najmniejszej krawędzi: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}".format(bR_SE, bRW_SE, final_time))
 
 start_time =   time.time()
-bR_RNN, bRW_RNN = algorithms.RNN(G)
+bR_RNN, bRW_RNN = algorithms.repeated_nearest_neighbour(G)
 final_time = time.time() - start_time
 print("\nPowtarzalny algorytm najbliższego sąsiada: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_RNN, bRW_RNN, final_time))

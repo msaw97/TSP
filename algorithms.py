@@ -29,6 +29,7 @@ def shift_right(lst):
 
 
 def nearest_neighbour(G, current):
+    """Algorytm najbliższego sąsiada."""
     bestRoute = [0 for n in range(G.n)]
     visited = [current]
 
@@ -55,7 +56,24 @@ def nearest_neighbour(G, current):
     return bestRoute
 
 
+def repeated_nearest_neighbour(G):
+    """Powtarzalny algorytm najbliższego sąsiada (RNN)."""
+    bestRoute = None
+    bestRouteWeight = 0
+
+    for n in range(G.n-1):
+        temp_route = nearest_neighbour(G, n)
+        temp_weight = G.getRouteWeight(temp_route)
+
+        if temp_weight < bestRouteWeight or bestRouteWeight == 0:
+            bestRouteWeight = temp_weight
+            bestRoute = temp_route
+
+    return bestRoute, bestRouteWeight
+
+
 def smallest_edge(G):
+    """Algorytm najmniejszej krawędzi."""
     queue = []
     bestRoute = []
 
@@ -89,19 +107,3 @@ def smallest_edge(G):
 
     #solution.print_graph()
     return solution.get_path()
-
-
-def RNN(G):
-    """Powtarzalny algorytm najbliższego sąsiada."""
-    bestRoute = None
-    bestRouteWeight = 0
-
-    for n in range(G.n-1):
-        temp_route = nearest_neighbour(G, n)
-        temp_weight = G.getRouteWeight(temp_route)
-
-        if temp_weight < bestRouteWeight or bestRouteWeight == 0:
-            bestRouteWeight = temp_weight
-            bestRoute = temp_route
-
-    return bestRoute, bestRouteWeight

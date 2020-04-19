@@ -189,6 +189,7 @@ class Edge():
 
 
 if __name__ == "__main__":
+    #TEST
     G = GraphAdjacencyMatrix(7)
     G.addE(0,2,6)
     G.addE(1,4,5)
