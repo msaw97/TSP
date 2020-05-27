@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from itertools import permutations
+from itertools import permutations, combinations
 import graphs
 
 
 def brute_force(G):
     """Rozwiązuje TSP metodą sprawdzenia wszystkich możliwości."""
-    bestRoute = None
-    bestRouteWeight = 0
-    routes = list(permutations(range(0, G.n)))    #znajduje wszystkie n permutacji wierzchołków
-    routes = [ list(n) for n in routes]
+    bestPath = None
+    bestPathWeight = 0
+    paths = list(permutations(range(0, G.n)))    #znajduje wszystkie n permutacji wierzchołków
+    paths = [list(n) for n in paths]
 
-    for n in routes:    #łączy ścieżki w cykle
+    for n in paths:    #łączy ścieżki w cykle
         n.append(n[0])
 
-    for r in routes:
-        temp_weight = G.getRouteWeight(r)
-        if temp_weight < bestRouteWeight or bestRouteWeight == 0:
-            bestRouteWeight = temp_weight
-            bestRoute = r
+    for r in paths:
+        temp_weight = G.get_path_weight(r)
+        if temp_weight < bestPathWeight or bestPathWeight == 0:
+            bestPathWeight = temp_weight
+            bestPath = r
 
-    return bestRoute, bestRouteWeight
+    return bestPath, bestPathWeight
 
 
 def shift_right(lst):
@@ -30,7 +30,7 @@ def shift_right(lst):
 
 def nearest_neighbour(G, current):
     """Algorytm najbliższego sąsiada."""
-    bestRoute = [0 for n in range(G.n)]
+    bestPath = [0 for n in range(G.n)]
     visited = [current]
 
     for i in range(G.n):
@@ -43,39 +43,35 @@ def nearest_neighbour(G, current):
                 minimum = (G[current][j], j)
 
         current = minimum[1]
-        bestRoute[i] = (visited[-1], current)
+        bestPath[i] = (visited[-1], current)
         visited.append(minimum[1])
 
-    bestRoute = [n[0] for n in bestRoute]
+    bestPath = [n[0] for n in bestPath]
+    bestPath.append(bestPath[0])
 
-    #if bestRoute[0] != 1:
-    #    shift_right(bestRoute)
-
-    bestRoute.append(bestRoute[0])
-
-    return bestRoute
+    return bestPath
 
 
 def repeated_nearest_neighbour(G):
     """Powtarzalny algorytm najbliższego sąsiada (RNN)."""
-    bestRoute = None
-    bestRouteWeight = 0
+    bestPath = None
+    bestPathWeight = 0
 
     for n in range(G.n-1):
-        temp_route = nearest_neighbour(G, n)
-        temp_weight = G.getRouteWeight(temp_route)
+        temp_path = nearest_neighbour(G, n)
+        temp_weight = G.get_path_weight(temp_path)
 
-        if temp_weight < bestRouteWeight or bestRouteWeight == 0:
-            bestRouteWeight = temp_weight
-            bestRoute = temp_route
+        if temp_weight < bestPathWeight or bestPathWeight == 0:
+            bestPathWeight = temp_weight
+            bestPath = temp_path
 
-    return bestRoute, bestRouteWeight
+    return bestPath, bestPathWeight
 
 
 def smallest_edge(G):
     """Algorytm najmniejszej krawędzi."""
     queue = []
-    bestRoute = []
+    bestPath = []
 
     #tworzy listę krawędzi wraz z ich wagami
     #krawędzie nie powtarzaja się tj. nie wystepuje krawedz (a,b,w) i (b,a,w)
@@ -90,7 +86,7 @@ def smallest_edge(G):
     queue.sort(key = lambda x: x.w)
 
     #tworzy graf zaimplementowany przez liste sąsiedztwa zawierący tylko wierzchołki
-    solution = graphs.GraphAdjacencyList(G.n )
+    solution = graphs.GraphAdjacencyList(G.n)
 
     edge_count = 0
     for i in range(len(queue)):
@@ -105,5 +101,49 @@ def smallest_edge(G):
             solution.add_edge(edge.u.key, edge.v.key)
             edge_count += 1
 
-    #solution.print_graph()
     return solution.get_path()
+
+
+def held_karp(G):
+    """Algorytm Helda-Karpa"""
+
+    #S - rozwiązania
+    S = {}
+
+    #przypadki trywialne
+    for j in range(1, G.n):
+        S[(1<<j, j)] = (G.get_edge_weight(0, j), 0)
+
+    for subset_size in range(2, G.n):
+        for subset in combinations(range(1,G.n), subset_size):
+
+            bits = 0
+            for bit in subset:
+                bits |= 1 << bit
+
+            for k in subset:
+                prev = bits & ~(1 << k)
+
+                res = []
+                for m in subset:
+                    if m == 0 or m == k:
+                        continue
+                    res.append((S[(prev, m)][0] + G[m][k], m))
+                S[(bits, k)] = min(res)
+
+    bits = (2**G.n - 1) - 1
+
+    res = []
+    for k in range(1, G.n):
+        res.append((S[(bits, k)][0] + G[k][0], k))
+    opt, parent = min(res)
+
+    bestPath = [0]
+    for i in range(G.n - 1):
+        bestPath.append(parent)
+        new_bits = bits & ~(1 << parent)
+        _, parent = S[(bits, parent)]
+        bits = new_bits
+
+    bestPath.append(0)
+    return bestPath
