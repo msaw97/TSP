@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+#Autor: Miłosz Sawicki
+#Licencja: GNU GPL
+
 
 import numpy as np
 from itertools import permutations, combinations
@@ -35,11 +38,15 @@ def nearest_neighbour(G, current):
 
     for i in range(G.n):
 
-        #znajduje najkrótszą spośród krawędzi łączących aktualny wierzchołek z jeszcze nieodwiedzonymi wierzchołkami
+        #znajduje najkrótszą spośród krawędzi łączących aktualny wierzchołek
+        #z jeszcze nieodwiedzonymi wierzchołkami
         minimum = (0, 0)
         for j in range(len(G[current])):
 
-            if j not in visited and  (0 < G[current][j] < minimum[0] or minimum == (0,0)):
+            if j not in visited and \
+            (0 < G[current][j] < minimum[0] or \
+            minimum == (0,0)):
+                    
                 minimum = (G[current][j], j)
 
         current = minimum[1]
@@ -96,8 +103,10 @@ def smallest_edge(G):
         if edge_count == G.n-1 and solution.is_not_third(edge.u.key, edge.v.key):
             solution.add_edge(edge.u.key, edge.v.key)
 
-        #dodaje krawędź, gdy nie powstanie wierzchołek, z którego wychodzą trzy krawędzie oraz nie powstanie cykl
-        elif solution.is_not_third(edge.u.key, edge.v.key) and solution.has_cycle(edge.u.key, edge.v.key) == False:
+        #dodaje krawędź, gdy nie powstanie wierzchołek,
+        #z którego wychodzą trzy krawędzie oraz nie powstanie cykl
+        elif solution.is_not_third(edge.u.key, edge.v.key) and \
+        solution.has_cycle(edge.u.key, edge.v.key) == False:
             solution.add_edge(edge.u.key, edge.v.key)
             edge_count += 1
 
@@ -142,7 +151,7 @@ def held_karp(G):
     for i in range(G.n - 1):
         bestPath.append(parent)
         new_bits = bits & ~(1 << parent)
-        _, parent = S[(bits, parent)]
+        _ , parent = S[(bits, parent)]
         bits = new_bits
 
     bestPath.append(0)

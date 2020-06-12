@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#Autor: Miłosz Sawicki
+#Licencja: GNU GPL
 
 import numpy as np
 
@@ -14,6 +16,7 @@ class GraphAdjacencyMatrix():
                             [30, 0, 20, 50],
                             [36, 20, 0, 67],
                             [40, 50, 67, 0]])
+        
         #self.G = np.array ([[0, 19, 10, 94], [19, 0, 99, 62], [10, 99, 0, 59], [94, 62, 59, 0]])
 
 
