@@ -12,13 +12,12 @@ class GraphAdjacencyMatrix():
         self.n = n
 
     def TEST(self):
-        self.G = np.array ([[0, 30, 36, 40],
-                            [30, 0, 20, 50],
-                            [36, 20, 0, 67],
-                            [40, 50, 67, 0]])
-        
-        #self.G = np.array ([[0, 19, 10, 94], [19, 0, 99, 62], [10, 99, 0, 59], [94, 62, 59, 0]])
-
+        """Przykład ze strony http://algorytmy.ency.pl/artykul/algorytm_helda_karpa"""
+        self.G = np.array([[0, 30, 36, 40],
+                        [30, 0, 20, 50],
+                        [36, 20, 0, 67],
+                        [40, 50, 67, 0]])
+        self.n = self.G.shape[0]
 
     def __repr__(self):
         return self.G
@@ -45,7 +44,7 @@ class GraphAdjacencyMatrix():
 
     def get_edge_weight(self, u, v):
         """Zwraca wagę krawędzi z wierzchołka u do v."""
-        return self.G[u,v]
+        return self.G[u][v]
 
     def get_path_weight(self, path):
         """Liczy sumę wag krawędzi na scieżce."""
@@ -190,20 +189,4 @@ class GraphAdjacencyList():
 
 
 if __name__ == "__main__":
-    #TEST
-    G = GraphAdjacencyMatrix(7)
-    G.addE(0,2,6)
-    G.addE(1,4,5)
-    G.addE(3,3,4)
-    G.removeE(1,4)
-    print(G)
-    print(G.full_randomize())
-
-    lst = []
-    e = Edge(1,2,20)
-    lst.append(e)
-    print(lst)
-
-    node1 = Node(1)
-    node2 = Node(2)
-    edge1 = Edge(node1,node2, 10)
+    pass

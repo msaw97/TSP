@@ -11,13 +11,12 @@ import argparse
 def CLI():
 	"""Interfejs linii komend programu."""
 	parser=argparse.ArgumentParser(description = "Program rozwiązujący problem komiwojażera za pomocą algorytmu dokładnego i wybranych algorymów rozwiązania przybliżonego.", prog = "TSP")
-	parser.add_argument("N", type = int, help="Liczba wierzchołków grafu.")
+	parser.add_argument("N", type = int, help="Liczba naturalna oznaczająca ilość wierzchołków grafu.")
 	parser.add_argument("-b", "--brute_force", action = "store_true", help = "Rozwiązuje TSP dokładnym algorytmem \"siłowym\".")
 	parser.add_argument("-nn", "--nearest_neighbour", action = "store_true", help = "Rozwiązuje TSP algorytmem najbliższego sąsiada.")
 	parser.add_argument("-se", "--smallest_edge", action = "store_true", help ="Rozwiązuje TSP algorytmem najbliższej krawędzi.")
 	parser.add_argument("-rnn", "--repeated_nearest_neighbour", action = "store_true", help = "Rozwiązuje TSP powtarzalnym algorytmem najbliższej krawędzi.")
 	parser.add_argument("-hk", "--held_karp", action = "store_true", help = "Rozwiązuje TSP algorytmem Helda-Karpa.")
-
 
 	return vars(parser.parse_args())
 
@@ -26,7 +25,6 @@ args = CLI()
 G = graphs.GraphAdjacencyMatrix(args["N"])
 G.full_randomize()
 #G.TEST()
-
 
 print("Program zawierający algorytmy rozwiązujące problem komiwojażera.")
 print("Macierz G na której wykonywane są obliczenia:")
@@ -67,8 +65,9 @@ if args["repeated_nearest_neighbour"]:
 	print("\nPowtarzalny algorytm najbliższego sąsiada: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_RNN, bR_RNN_weight, final_time))
 
 if args["held_karp"]:
-	start_time = time.time()
-	bR_HK = algorithms.held_karp(G)
-	final_time = time.time() - start_time
-	bR_HK_weight = G.get_path_weight(bR_HK)
-	print("\nAlgorytm Helda-Karpa: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_HK, bR_HK_weight, final_time))
+	#start_time = time.time()
+	print("\nAlgorytm Helda-Karpa:")
+	algorithms.held_karp(G)
+	#final_time = time.time() - start_time
+	#bR_HK_weight = G.get_path_weight(bR_HK)
+	#print("\nAlgorytm Helda-Karpa: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_HK, bR_HK_weight, final_time))
