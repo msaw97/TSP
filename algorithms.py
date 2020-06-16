@@ -118,73 +118,52 @@ def held_karp(G):
     # D - słownik reprezentujący długość ścieżki wychodzącej od wierzchołka 0 do p,
     # która przechodzi przez te wierzchołki w grafie określone zbiorem S.
     # Kluczem D jest krotka (S, p).
-    # Wartością D jest krotka (y, p), w której
-    # y - suma wag krawędzi na ścieżce, p - indeks przedostatniego wierzchołka na ścieżce.
+    # Wartością D jest krotka (y, parent), w której
+    # y - suma wag krawędzi na ścieżce, parent - indeks przedostatniego wierzchołka na ścieżce.
     
     D = {}
 
 
-    def evaluate_path(D, S, p, subset_size):
-        
-        print("S: {}, p: {}, D: {}".format(S, p, (tuple(S), p)))
-
-        #S_bez_p = [s for s in subset if s != p]
-        #print("SUBSETY DO PODZIELENIA", list(combinations(subset, subset_size-1)))
-
-        #for j in combinations(subset, subset_size-1):
-        #    print("j", j)
-
-       # print(len(S))
-
-
-        #if (tuple(S), p) in D.keys():
-        #    return D[(tuple(S), p)]
-
-
-        S_bez_p = [s for s in S if s != p]
-        print("subset bez p:", S_bez_p)
-
-
-        path_weights = []
-        for n in S_bez_p:
-            print("n:", n)
-            print((tuple(S_bez_p), n), D[(tuple(S_bez_p), n)], G[n][p])
-
-            if (tuple(S_bez_p), n) in D.keys():
-                path_weights.append(D[(tuple(S_bez_p), n)] + G[n][p])
-                #print("JEST")
-        
-        min(path_weights)   
-        print(path_weights)
-
-        return min(path_weights)
-
-
-    #Do rozwiązania dodawane są przypadki trywialne, gdzie zbiór S jest jednoelementowy.
+    # Do rozwiązania dodawane są przypadki trywialne, gdzie zbiór S jest jednoelementowy.
     for j in range(1, G.n):
-        D[((j,),j)] = G.get_edge_weight(0, j)
+        D[((j,),j)] = (G.get_edge_weight(0, j), 0)
 
-    #Zmienna subset_size oznacza ilość elementów w zbiorze S.
+    # Zmienna subset_size oznacza ilość elementów w zbiorze S.
     for subset_size in range(2, G.n):
-        print("subset_size:", subset_size)
-        #Poniższa pętla iteruje po możliwych kombinacjach wierzchołków w zbiorze S 
-        #dla konkretnej wartości subset_size
-        print("kombinacje:", list(combinations(range(1,G.n), subset_size)))
         for subset in combinations(range(1,G.n), subset_size):
-            print("\nsubset:", subset)
 
-            for i, p in enumerate(subset):
+            for p in subset:
 
                 S_bez_p = [s for s in subset if s != p]
 
                 path_weights = []
                 for n in S_bez_p:
-                    print("n:", n)
-                    print((tuple(S_bez_p), n), D[(tuple(S_bez_p), n)], G[n][p])
 
                     if (tuple(S_bez_p), n) in D.keys():
-                        path_weights.append(D[(tuple(S_bez_p), n)] + G[n][p])
+                        path_weights.append((D[(tuple(S_bez_p), n)][0] + G[n][p], n))
 
-                D[tuple(subset),p] = min(path_weights)
+                D[tuple(subset),p] = (min(path_weights)[0], min(path_weights)[1])
 
-    print("\nD:", D)
+
+    # Obliczanie kosztu przejścia całej ścieżki
+    cost = []
+    S = tuple(range(1, G.n))
+
+    for n in S:
+        cost.append((D[(S,n)][0] + G[n][0], n))
+
+    opt = (min(cost)[0], min(cost)[1])
+
+    # Otwarzanie trasy korzystając z zmiennej parent
+    path = [0, opt[1]]
+    parent = path[1]
+
+    for i in reversed(sorted( D.items(), key = lambda x: len(x))):
+        if i[0][0] == S and i[0][1] == parent:
+            S = tuple([j for j in i[0][0] if j != i[0][1]])
+            parent = i[1][1]
+            path.append(parent)
+
+
+    return path, opt[0]
+        

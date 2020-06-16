@@ -65,9 +65,7 @@ if args["repeated_nearest_neighbour"]:
 	print("\nPowtarzalny algorytm najbliższego sąsiada: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_RNN, bR_RNN_weight, final_time))
 
 if args["held_karp"]:
-	#start_time = time.time()
-	print("\nAlgorytm Helda-Karpa:")
-	algorithms.held_karp(G)
-	#final_time = time.time() - start_time
-	#bR_HK_weight = G.get_path_weight(bR_HK)
-	#print("\nAlgorytm Helda-Karpa: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_HK, bR_HK_weight, final_time))
+	start_time = time.time()
+	bR_HK, bR_HK_weight = algorithms.held_karp(G)
+	final_time = time.time() - start_time
+	print("\nAlgorytm Helda-Karpa: {}. Łączna waga krawędzi: {}. \nCzas wykonania: {}.".format(bR_HK, bR_HK_weight, final_time))
