@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#Autor: Miłosz Sawicki
-#Licencja: GNU GPL
+# Autor: Miłosz Sawicki
+# Licencja: GNU GPL
 
 
 import numpy as np
@@ -12,10 +12,10 @@ def brute_force(G):
     """Rozwiązuje TSP metodą sprawdzenia wszystkich możliwości."""
     bestPath = None
     bestPathWeight = 0
-    paths = list(permutations(range(0, G.n)))    #znajduje wszystkie n permutacji wierzchołków
+    paths = list(permutations(range(0, G.n)))    # znajduje wszystkie n permutacji wierzchołków
     paths = [list(n) for n in paths]
 
-    for n in paths:    #łączy ścieżki w cykle
+    for n in paths:    # łączy ścieżki w cykle
         n.append(n[0])
 
     for r in paths:
@@ -78,33 +78,32 @@ def repeated_nearest_neighbour(G):
 def smallest_edge(G):
     """Algorytm najmniejszej krawędzi."""
     queue = []
-    bestPath = []
 
-    #Tworzona jest lista krawędzi wraz z ich wagami.
-    #Krawędzie nie powtarzaja się tj. nie wystepuje krawedz (a,b,w) i (b,a,w).
+    # Tworzona jest lista krawędzi wraz z ich wagami.
+    # Krawędzie nie powtarzaja się tj. nie wystepuje krawedz (a,b,w) i (b,a,w).
     for n in range(0, G.n -1):
-        minimum = [n, G[n][n], G[n][n+1]]     #[wiersz, kolumna, waga]
+        minimum = [n, G[n][n], G[n][n+1]]     # [wiersz, kolumna, waga]
         for j, k in enumerate( G[n][n+1:], n):
             minimum[1] = j+1
             minimum[2] = k
             queue.append(graphs.Edge(*minimum))
 
-    #Sortowanie kolejki rosnaco według wag.
+    # Sortowanie kolejki rosnaco według wag.
     queue.sort(key = lambda x: x.w)
 
-    #Tworzony jest graf zaimplementowany przez liste sąsiedztwa, zawierący tylko wierzchołki.
+    # Tworzony jest graf zaimplementowany przez liste sąsiedztwa, zawierący tylko wierzchołki.
     solution = graphs.GraphAdjacencyList(G.n)
 
     edge_count = 0
     for i in range(len(queue)):
         edge = queue.pop(0)
 
-        #Dodawanie krawędzi w ostatnej iteracji algorytmu.
+        # Dodawanie krawędzi w ostatnej iteracji algorytmu.
         if edge_count == G.n-1 and solution.is_not_third(edge.u.key, edge.v.key):
             solution.add_edge(edge.u.key, edge.v.key)
 
-        #Dodawanie krawędzi, gdy nie powstanie wierzchołek,
-        #z którego wychodzą trzy krawędzie oraz nie powstanie cykl.
+        # Dodawanie krawędzi, gdy nie powstanie wierzchołek,
+        # z którego wychodzą trzy krawędzie oraz nie powstanie cykl.
         elif solution.is_not_third(edge.u.key, edge.v.key) and \
         solution.has_cycle(edge.u.key, edge.v.key) == False:
             solution.add_edge(edge.u.key, edge.v.key)
@@ -116,52 +115,76 @@ def smallest_edge(G):
 def held_karp(G):
     """Algorytm Helda-Karpa"""
 
-    #D - słownik reprezentujący długość ścieżki wychodzącej od wierzchołka 0 do p,
-    #która przechodzi przez te wierzchołki w grafie określone zbiorem S.
-    #Kluczem D jest krotka (S, p).
-    #Wartością D jest krotka (y, p), w której
-    #y - suma wag krawędzi na ścieżce, p - indeks przedostatniego wierzchołka na ścieżce.
+    # D - słownik reprezentujący długość ścieżki wychodzącej od wierzchołka 0 do p,
+    # która przechodzi przez te wierzchołki w grafie określone zbiorem S.
+    # Kluczem D jest krotka (S, p).
+    # Wartością D jest krotka (y, p), w której
+    # y - suma wag krawędzi na ścieżce, p - indeks przedostatniego wierzchołka na ścieżce.
     
     D = {}
 
+
+    def evaluate_path(D, S, p, subset_size):
+        
+        print("S: {}, p: {}, D: {}".format(S, p, (tuple(S), p)))
+
+        #S_bez_p = [s for s in subset if s != p]
+        #print("SUBSETY DO PODZIELENIA", list(combinations(subset, subset_size-1)))
+
+        #for j in combinations(subset, subset_size-1):
+        #    print("j", j)
+
+       # print(len(S))
+
+
+        #if (tuple(S), p) in D.keys():
+        #    return D[(tuple(S), p)]
+
+
+        S_bez_p = [s for s in S if s != p]
+        print("subset bez p:", S_bez_p)
+
+
+        path_weights = []
+        for n in S_bez_p:
+            print("n:", n)
+            print((tuple(S_bez_p), n), D[(tuple(S_bez_p), n)], G[n][p])
+
+            if (tuple(S_bez_p), n) in D.keys():
+                path_weights.append(D[(tuple(S_bez_p), n)] + G[n][p])
+                #print("JEST")
+        
+        min(path_weights)   
+        print(path_weights)
+
+        return min(path_weights)
+
+
     #Do rozwiązania dodawane są przypadki trywialne, gdzie zbiór S jest jednoelementowy.
     for j in range(1, G.n):
-        D[(j, j)] = (G.get_edge_weight(0, j), 0)
+        D[((j,),j)] = G.get_edge_weight(0, j)
 
     #Zmienna subset_size oznacza ilość elementów w zbiorze S.
     for subset_size in range(2, G.n):
-
+        print("subset_size:", subset_size)
         #Poniższa pętla iteruje po możliwych kombinacjach wierzchołków w zbiorze S 
         #dla konkretnej wartości subset_size
         print("kombinacje:", list(combinations(range(1,G.n), subset_size)))
         for subset in combinations(range(1,G.n), subset_size):
-            for p in subset:
+            print("\nsubset:", subset)
 
-                path = [0]
-                prev = 0
-                for i, n in enumerate(subset):
+            for i, p in enumerate(subset):
 
-                    if n == p:
-                        continue
+                S_bez_p = [s for s in subset if s != p]
 
-                    #subset[i] to przedostatni wierzchołek na ścieżce.
-                    prev = subset[i]
-                    path.append(n)
+                path_weights = []
+                for n in S_bez_p:
+                    print("n:", n)
+                    print((tuple(S_bez_p), n), D[(tuple(S_bez_p), n)], G[n][p])
 
-                #Dodawany jest ostatni wierzchołek p.
-                path.append(p)
+                    if (tuple(S_bez_p), n) in D.keys():
+                        path_weights.append(D[(tuple(S_bez_p), n)] + G[n][p])
 
-                #Lista perm zawiera wszystkie możliwości ustawienia wierzchołków w pathx
-                perm = []
-                for l in permutations(path[1:-1], subset_size-1):
-
-                    #Do listy perm dodawana jest suma wag krawędzi ścieżki oraz indeks przedostatniego wierzchołka.
-                    perm.append((G.get_path_weight(path[:1] + list(l) + path[-1:]), l[-1]))
-
-                print("path: {}, perm: {}".format(path,perm))
-
-                #Do D dodawany jest element perm z najmniejszą sumą wag krawędzi.
-                D[((subset), p)] = min(perm, key = lambda x: x[0])
-
+                D[tuple(subset),p] = min(path_weights)
 
     print("\nD:", D)
