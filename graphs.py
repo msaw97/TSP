@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-#Autor: Miłosz Sawicki
-#Licencja: GNU GPL
+# Autor: Miłosz Sawicki
+# Licencja: GNU GPL
 
 import numpy as np
+from scipy.spatial import distance
 
 
 class GraphAdjacencyMatrix():
@@ -55,21 +56,49 @@ class GraphAdjacencyMatrix():
 
         return sum(pathWeight)
 
-    def full_randomize(self):
+    def full_randomize(self, epsilon, EDM):
         """Tworzy pełny graf n wierzchołkow z losowymi wagami."""
-        self.G = np.random.randint(1,100, self.G.shape)
 
-        #tworzy macierz symetryczna
-        for i in range(self.n):
-            for j in range(len(self.G[i][:i])):
-                self.G[i][j] = self.G[j][i]
+        def random_uniform(R):
+            return round(np.random.uniform(low=0.0, high=1.0), R)
 
-        np.fill_diagonal(self.G, 0)
-        return self.G
+        R = 3
+        if EDM: 
+            self.G = np.zeros(self.G.shape)
+
+            points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
+        
+            for i in range(len(points)):
+                for j in range(len(points)):
+                    self.G[i][j] = distance.euclidean(points[i], points[j])
+
+            self.G = self.G * epsilon
+
+            return self.G
+
+        else:
+            self.G = np.zeros(self.G.shape)
+            
+            for i in range(self.n):
+                for j in range(self.n):
+                    self.G[i][j] = np.random.uniform(low=0.0, high=1.0)
+            #self.G = np.random.randint(1,100, self.G.shape)
+
+            #Tworzy macierz symetryczna
+            for i in range(self.n):
+                for j in range(len(self.G[i][:i])):
+                    self.G[i][j] = self.G[j][i]
+
+            np.fill_diagonal(self.G, 0)
+
+            self.G = self.G * epsilon
+
+            return self.G
 
 
 class Node():
     """Wierzchołek grafu."""
+
     def __init__(self, key, next = None):
         self.next = next
         self.key = key
@@ -80,6 +109,7 @@ class Node():
 
 class Edge():
     """Krawędź grafu."""
+
     def __init__(self, u, v, w):
         self.u = Node(u, v)
         self.v = Node(v, u)
@@ -122,7 +152,8 @@ class GraphAdjacencyList():
             print(" \n")
 
     def size(self, node):
-        """Funkcja zwracająca ilość krawędzi wychodzących z wierzchołka."""
+        """Funkcja zwracająca stopień wierzchołka."""
+
         size = 0
         temp = self.G[node]
         while temp:
@@ -131,15 +162,17 @@ class GraphAdjacencyList():
         return size
 
     def is_not_third(self, u, v):
-        """Funkcja która sprawdza, czy dodanie krawędzi spowoduje powstanie wierzchołka,
-        z którego wychodzą trzy krawędzie."""
+        """Funkcja która sprawdza, czy dodanie krawędzi (u, v)
+        nie spowoduje powstanie wierzchołka o stopniu większym niż 2.
+        """
+
         if self.size(u) < 2 and self.size(v) < 2:
             return True
 
     def has_cycle(self, u, v):
         """Funkcja wykrywająca cykl w grafie, gdy dodawana jest krawędź (u,v)."""
 
-        #cykl może wystąpić tylko wtedy, gdy każdy z wierzchołków u i v posiada istniejącą krawędź
+        # Cykl może wystąpić tylko wtedy, gdy każdy z wierzchołków u i v posiada istniejącą krawędź.
         if self.G[u] == None or self.G[v] == None:
             return False
 
@@ -147,8 +180,8 @@ class GraphAdjacencyList():
         visited = [u]
 
         while current.key != self.G[v].key:
-
-            #pętla while przechodząca po danej liście sąsiedctwa wierzchołka grafu
+            
+            # Pętla while przechodząca po danej liście sąsiedctwa wierzchołka grafu.
             while self.G[current.key].next != None:
                 if self.G[current.key].key not in visited:
                     visited.append(current.key)
@@ -156,11 +189,11 @@ class GraphAdjacencyList():
                 else:
                     current = self.G[current.key].next
 
-            #warunek istnienia cyklu
+            # Warunek istnienia cyklu.
             if current.key == self.G[v].key:
                 return True
 
-            #warunek obsługujący przechodzenie po wierzchołkach ścieżki grafu
+            # Warunek obsługujący przechodzenie po wierzchołkach ścieżki grafu.
             if self.G[current.key].key not in visited:
                 current = self.G[current.key]
                 visited.append(current.key)
@@ -170,6 +203,7 @@ class GraphAdjacencyList():
 
     def get_path(self):
         """Funkcja przechodząca przez cały graf zwracająca ścieżkę."""
+
         current = self.G[0]
         visited = [0]
 
