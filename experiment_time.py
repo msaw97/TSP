@@ -2,7 +2,7 @@
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
 # 20.06.2020
-# Program przeprowadzający analize czasu wykonania zaimplementowanych algorytmów rozwiązywania problemu komiwojażera.
+# Program przeprowadzający analize czasu wykonania algorytmów rozwiązujących problemu komiwojażera.
 
 import numpy as np
 import pandas as pd
@@ -37,7 +37,7 @@ def calulate_time(alg, EDM, m, k):
 	"""Funkcja obliczająca czas wykonania algorytmu.
 	m, k są granicami ilości wierzchołków grafu N.
 	"""
-	time_avr_list = []
+	avr_time_list = []
 	for N in np.arange(m ,k):
 		G = graphs.GraphAdjacencyMatrix(N)
 
@@ -49,7 +49,7 @@ def calulate_time(alg, EDM, m, k):
 
 			start_time = time.time()
 			if alg == algorithms.NN_ALG:
-				_, weight = alg(G, 1)
+				_, weight = alg(G, 0)
 				print("Algorytm {}. N = {} Suma wszystkich wag krawędzi cyklu TSP: {}".format(alg.__name__, N, weight))
 			else:
 				_, weight = alg(G)
@@ -57,9 +57,9 @@ def calulate_time(alg, EDM, m, k):
 
 			time_list.append(time.time() - start_time)
 
-		time_avr_list.append(sum(time_list) / len(time_list))
+		avr_time_list.append(sum(time_list) / len(time_list))
 
-	return time_avr_list
+	return avr_time_list
 
 
 def measure_algorithms(max_N, EDM):
@@ -67,38 +67,43 @@ def measure_algorithms(max_N, EDM):
 	for alg in algorytmy_lista:
 
 		if alg.__name__ == "brute_force":
-			time_avr_list = calulate_time(alg, EDM, 2, 9)
-			time_avr_list = time_avr_list + [ np.nan for i in range(max_N -len(time_avr_list))]
+			avr_time_list = calulate_time(alg, EDM, 2, 9)
+			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "NN_ALG":
-			time_avr_list = calulate_time(alg, EDM, 2, 100)
-			time_avr_list = time_avr_list + [ np.nan for i in range(max_N -len(time_avr_list))]
+			avr_time_list = calulate_time(alg, EDM, 2, 100)
+			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "RNN_ALG":
-			time_avr_list =	calulate_time(alg, EDM, 2, 50)
-			time_avr_list = time_avr_list + [ np.nan for i in range(max_N -len(time_avr_list))]
+			avr_time_list =	calulate_time(alg, EDM, 2, 50)
+			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "CI_ALG":
-			time_avr_list = calulate_time(alg, EDM, 2, 80)
-			time_avr_list = time_avr_list + [ np.nan for i in range(max_N -len(time_avr_list))]
+			avr_time_list = calulate_time(alg, EDM, 2, 80)
+			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "held_karp":
-			time_avr_list = calulate_time(alg, EDM, 2, 14)
-			time_avr_list = time_avr_list + [ np.nan for i in range(max_N -len(time_avr_list))]
+			avr_time_list = calulate_time(alg, EDM, 2, 14)
+			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
-		df_time[alg.__name__] = time_avr_list
+		df_time[alg.__name__] = avr_time_list
 
 
 def plot_time(df_time):
 	"""Funkcja rysująca wykres."""
 	ax = plt.gca()
 
-	name = "Średni czas wykonania algorytmów rozwiązujących TSP."
 	df_time.plot(kind='line', y='brute_force', color='red', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='NN_ALG', color='blue', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='RNN_ALG', color='green', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='CI_ALG', color='purple', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='held_karp', color='black', use_index=True, ax=ax)
+	ax.set_xlabel("Liczba wierzchołków grafu N")
+	ax.set_ylabel('Czas (s)')
+	if EDM:
+		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP (EDM).')
+	else:
+		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP.')
 
 	plt.show()
 

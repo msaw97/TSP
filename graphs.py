@@ -82,7 +82,6 @@ class GraphAdjacencyMatrix():
             for i in range(self.n):
                 for j in range(self.n):
                     self.G[i][j] = np.random.uniform(low=0.0, high=1.0)
-            #self.G = np.random.randint(1,100, self.G.shape)
 
             #Tworzy macierz symetryczna
             for i in range(self.n):
