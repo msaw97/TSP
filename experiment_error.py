@@ -9,10 +9,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import algorithms
 import graphs
+#from numba import jit, cuda 
 
-EDM = False
-iterations = 20
+# N - maksymalna liczba wierzchołków grafu.
 max_N = 16
+# Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
+EDM = False
+# Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
+iterations = 20
 
 # Lista algorytmów aproksymacyjnych.
 algorytmy_lista = [
@@ -25,38 +29,37 @@ algorytmy_lista = [
 df_error = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], index = np.arange(2, max_N))
 df_error.columns.name = 'N'
 
-opt_weight_list = []
+def measure_error():
+	for alg in algorytmy_lista:
+		avr_error_list = []
 
-for alg in algorytmy_lista:
-	avr_error_list = []
+		for N in np.arange(2, max_N):
 
-	for N in np.arange(2, max_N):
+			G = graphs.GraphAdjacencyMatrix(N)
+			error_list = [] 
 
-		G = graphs.GraphAdjacencyMatrix(N)
-		error_list = [] 
+			for i in range(iterations):
+				G.full_randomize(100, EDM)
 
-		for i in range(iterations):
-			G.full_randomize(100, EDM)
+				# Algorytm Helda-Karpa znajduje opymalny cykl TSP.
+				_, opt_weight = algorithms.held_karp(G)
 
-			# Algorytm Helda-Karpa znajduje opymalny cykl TSP.
-			_, opt_weight = algorithms.held_karp(G)
+				# Obliczany jest bląd względny rozwiązania przybliżonego.
+				if alg == algorithms.NN_ALG:
+					_, weight = alg(G, 0)
+					error = weight/opt_weight
+					error_list.append(error)
+					print("Algorytm {}. N = {} Błąd względny algorytmu: {}".format(alg.__name__, N, error))
+				else:
+					_, weight = alg(G)
+					error = weight/opt_weight
+					error_list.append(error)
+					print("Algorytm {}. N = {} Błąd względny algorytmu: {}".format(alg.__name__, N, error))
 
-			# Obliczany jest bląd względny rozwiązania przybliżonego.
-			if alg == algorithms.NN_ALG:
-				_, weight = alg(G, 0)
-				error = weight/opt_weight
-				error_list.append(error)
-				print("Algorytm {}. N = {} Błąd względny algorytmu: {}".format(alg.__name__, N, error))
-			else:
-				_, weight = alg(G)
-				error = weight/opt_weight
-				error_list.append(error)
-				print("Algorytm {}. N = {} Błąd względny algorytmu: {}".format(alg.__name__, N, error))
+			# Obliczany jest średni błąd względny dla danej liczby wierzchołków N.
+			avr_error_list.append(sum(error_list) / len(error_list))
 
-		# Obliczany jest średni błąd względny dla danej liczby wierzchołków N.
-		avr_error_list.append(sum(error_list) / len(error_list))
-
-	df_error[alg.__name__] = avr_error_list
+		df_error[alg.__name__] = avr_error_list
 	
 def plot_error(df_error):
 	"""Funkcja rysująca wykres."""
@@ -76,5 +79,6 @@ def plot_error(df_error):
 
 
 if __name__ == '__main__':
+	measure_error()
 	print(df_error)
 	plot_error(df_error)

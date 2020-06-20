@@ -67,7 +67,7 @@ if args["RNN_ALG"]:
 
 if args["CI_ALG"]:
 	start_time =   time.time()
-	bR_CI, bR_insertion_weight = algorithms.CI_ALG(G)
+	bR_CI, bR_CI_weight = algorithms.CI_ALG(G)
 	final_time = time.time() - start_time
 	print("\nAlgorytm najmniejszej krawędzi. Cykl TSP: {}. Suma wag krawędzi cyklu: {} \nCzas wykonania: {}".format(bR_CI, bR_CI_weight, final_time))
 

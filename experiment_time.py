@@ -10,11 +10,13 @@ import matplotlib.pyplot as plt
 import time
 import algorithms
 import graphs
+#from numba import jit, cuda 
+
 
 # N - Maksymalna liczba, dla której generowane są grafu.
 # Ustalana w celu stworzenia ramki danych df_time.
 max_N = 100
-# Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnie z metryką euklidesową.
+# Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
 iterations = 15
@@ -32,21 +34,21 @@ algorytmy_lista = [
 df_time = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], index = np.arange(2, max_N))
 df_time.columns.name = 'N'
 
-
-def calulate_time(alg, EDM, m, k):
+def calulate_time(alg, m, k):
 	"""Funkcja obliczająca czas wykonania algorytmu.
-	m, k są granicami ilości wierzchołków grafu N.
+	m, k są granicami przedziału, w którym zawiera się liczba wierzchołków grafu N.
 	"""
 	avr_time_list = []
 	for N in np.arange(m ,k):
 		G = graphs.GraphAdjacencyMatrix(N)
 
-		# Każdy algorytm jest wykonywany 10 razy
-		# Z każdą iteracją wagi krawędzi są ustawane losowo z rozkładu jednostajnego
+		# Każdy algorytm jest wykonywany 10 razy.
+		# Z każdą iteracją wagi krawędzi są ustawane losowo z rozkładu jednostajnego.
 		time_list = []
 		for i in range(iterations):
 			G.full_randomize(100, EDM)
 
+			# Obliczany jest czas wykonania algorytmów.
 			start_time = time.time()
 			if alg == algorithms.NN_ALG:
 				_, weight = alg(G, 0)
@@ -57,33 +59,34 @@ def calulate_time(alg, EDM, m, k):
 
 			time_list.append(time.time() - start_time)
 
+		# Obliczany jest średni czas wykonania algorytmów.
 		avr_time_list.append(sum(time_list) / len(time_list))
 
 	return avr_time_list
 
 
-def measure_algorithms(max_N, EDM):
+def measure_algorithms(max_N):
 	max_N = max_N -2
 	for alg in algorytmy_lista:
 
 		if alg.__name__ == "brute_force":
-			avr_time_list = calulate_time(alg, EDM, 2, 9)
+			avr_time_list = calulate_time(alg, 2, 9)
 			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "NN_ALG":
-			avr_time_list = calulate_time(alg, EDM, 2, 100)
+			avr_time_list = calulate_time(alg, 2, 100)
 			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "RNN_ALG":
-			avr_time_list =	calulate_time(alg, EDM, 2, 50)
+			avr_time_list =	calulate_time(alg, 2, 50)
 			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "CI_ALG":
-			avr_time_list = calulate_time(alg, EDM, 2, 80)
+			avr_time_list = calulate_time(alg, 2, 80)
 			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		if alg.__name__ == "held_karp":
-			avr_time_list = calulate_time(alg, EDM, 2, 14)
+			avr_time_list = calulate_time(alg, 2, 14)
 			avr_time_list = avr_time_list + [ np.nan for i in range(max_N -len(avr_time_list))]
 
 		df_time[alg.__name__] = avr_time_list
@@ -108,6 +111,6 @@ def plot_time(df_time):
 	plt.show()
 
 if __name__ == "__main__":
-	measure_algorithms(max_N, EDM)
+	measure_algorithms(max_N)
 	print(df_time)	
 	plot_time(df_time)

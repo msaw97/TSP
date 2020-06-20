@@ -6,7 +6,6 @@ import numpy as np
 from itertools import permutations, combinations
 import graphs
 
-
 def brute_force(G):
     """Rozwiązuje TSP metodą sprawdzenia wszystkich możliwości.
     G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa;
@@ -32,7 +31,6 @@ def brute_force(G):
             bestPath = r
 
     return bestPath, pathWeight
-
 
 def NN_ALG(G, current):
     """Algorytm najbliższego sąsiada.
@@ -66,7 +64,6 @@ def NN_ALG(G, current):
 
     return bestPath, G.get_path_weight(bestPath)
 
-
 def RNN_ALG(G):
     """Powtarzalny algorytm najbliższego sąsiada (RNN)."""
     bestPath = None
@@ -80,7 +77,6 @@ def RNN_ALG(G):
             bestPath = temp_path
 
     return bestPath, bestPathWeight
-
 
 def CI_ALG(G):
     """Algorytm najmniejszej krawędzi (ang. cheapest insertion algorithm)
@@ -122,7 +118,6 @@ def CI_ALG(G):
     bestPath = solution.get_path()
 
     return bestPath,  G.get_path_weight(bestPath)
-
 
 
 
