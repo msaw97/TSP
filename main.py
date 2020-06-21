@@ -60,13 +60,13 @@ if args["NN_ALG"]:
 	print("\nAlgorytm najbliższego sąsiada. Cykl TSP: {}. Suma wag krawędzi cyklu: {} \nCzas wykonania: {}.".format(bR_NN, bR_NN_weight, final_time))
 
 if args["RNN_ALG"]:
-	start_time =   time.time()
+	start_time = time.time()
 	bR_RNN, bR_RNN_weight = algorithms.RNN_ALG(G)
 	final_time = time.time() - start_time
 	print("\nPowtarzalny algorytm najbliższego sąsiada. Cykl TSP: {}. Suma wag krawędzi cyklu: {} \nCzas wykonania: {}.".format(bR_RNN, bR_RNN_weight, final_time))
 
 if args["CI_ALG"]:
-	start_time =   time.time()
+	start_time = time.time()
 	bR_CI, bR_CI_weight = algorithms.CI_ALG(G)
 	final_time = time.time() - start_time
 	print("\nAlgorytm najmniejszej krawędzi. Cykl TSP: {}. Suma wag krawędzi cyklu: {} \nCzas wykonania: {}".format(bR_CI, bR_CI_weight, final_time))

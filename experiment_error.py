@@ -9,16 +9,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import algorithms
 import graphs
-#from numba import jit, cuda 
+from scipy import optimize
+
+np.random.seed(seed=12345)
 
 # N - maksymalna liczba wierzchołków grafu.
-max_N = 16
+max_N = 12
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
-EDM = False
+EDM = True
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 20
+iterations = 30
 
-# Lista algorytmów aproksymacyjnych.
+# Lista algorytmów aproksymacyjnych problemu komiwojażera.
 algorytmy_lista = [
 	algorithms.NN_ALG,
 	algorithms.RNN_ALG,
@@ -30,6 +32,7 @@ df_error = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], ind
 df_error.columns.name = 'N'
 
 def measure_error():
+	"""Funkcja mierząca błąd względny algorytmu."""
 	for alg in algorytmy_lista:
 		avr_error_list = []
 
@@ -63,20 +66,27 @@ def measure_error():
 	
 def plot_error(df_error):
 	"""Funkcja rysująca wykres."""
-	ax = plt.gca()
 
-	df_error.plot(kind='line', y='NN_ALG', color='blue', use_index=True, ax=ax)
-	df_error.plot(kind='line', y='RNN_ALG', color='green', use_index=True, ax=ax)
-	df_error.plot(kind='line', y='CI_ALG', color='purple', use_index=True, ax=ax)
-	ax.set_xlabel("Liczba wierzchołków grafu N")
-	ax.set_ylabel('Czas (s)')
+	def fit_func(x, a, b, c):
+		return a*x**2 + b*x +c
+
+	X = np.array(df_error.index)
+	for Y_column in df_error.columns:
+		Y = np.array(df_error[Y_column])
+
+		params, pcov = optimize.curve_fit(fit_func, X, Y)
+		plt.scatter(X, Y, label=Y_column)	
+		plt.plot(X, fit_func(X, *params))
+
 	if EDM:
-		ax.set_title('Średni błąd względny algorytmów rozwiązujących TSP (EDM).')
+		plt.title('Średni błąd względny algorytmów rozwiązujących TSP (EDM).')
 	else:
-		ax.set_title('Średni błąd względny algorytmów rozwiązujących TSP.')
+		plt.title('Średni błąd względny algorytmów rozwiązujących TSP.')
 
+	plt.xlabel("Liczba wierzchołków grafu N")  
+	plt.ylabel('Bląd względny')
+	plt.legend()
 	plt.show()
-
 
 if __name__ == '__main__':
 	measure_error()

@@ -62,6 +62,8 @@ class GraphAdjacencyMatrix():
         def random_uniform(R):
             return round(np.random.uniform(low=0.0, high=1.0), R)
 
+        # Generuje graf zgodny z metryką euklidesową.
+        # Wszystkie krawędzie grafu spełniają nierówność trójkąta.
         R = 3
         if EDM: 
             self.G = np.zeros(self.G.shape)
