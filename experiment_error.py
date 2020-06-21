@@ -13,12 +13,12 @@ from scipy import optimize
 
 np.random.seed(seed=12345)
 
-# N - maksymalna liczba wierzchołków grafu.
+# max_N - maksymalna liczba wierzchołków grafu.
 max_N = 12
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = True
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 30
+iterations = 10
 
 # Lista algorytmów aproksymacyjnych problemu komiwojażera.
 algorytmy_lista = [
@@ -86,6 +86,7 @@ def plot_error(df_error):
 	plt.xlabel("Liczba wierzchołków grafu N")  
 	plt.ylabel('Bląd względny')
 	plt.legend()
+	plt.savefig("images/error_maxN({})_iter({})_EDM({}).pdf".format(max_N, iterations, EDM))
 	plt.show()
 
 if __name__ == '__main__':

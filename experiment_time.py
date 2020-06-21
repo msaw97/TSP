@@ -13,9 +13,9 @@ import graphs
 
 np.random.seed(seed=12345)
 
-# max_N - Maksymalna liczba, dla której generowane są grafy,
-# ustalana w celu stworzenia ramki danych df_time.
-max_N = 100
+# max_N - Maksymalna liczba, dla której generowane są grafy.
+# Jest ona ustalana w celu stworzenia ramki danych df_time.
+max_N = 20
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
@@ -28,7 +28,7 @@ algorytmy_lista = {
 	algorithms.NN_ALG : 100,
 	algorithms.RNN_ALG : 60,
 	algorithms.CI_ALG : 80,
-	algorithms.held_karp : 15,
+	algorithms.held_karp : 16,
 }
 
 # Ramka danych, w której znajdują się wyniki z eksperymentu.
@@ -42,7 +42,7 @@ def measure_time(max_N):
 	for alg, k in algorytmy_lista.items():
 
 		avr_time_list = []
-		for N in np.arange(2 , max_N):
+		for N in np.arange(2 , k):
 			G = graphs.GraphAdjacencyMatrix(N)
 
 			# Każdy algorytm jest wykonywany 10 razy.
@@ -86,6 +86,7 @@ def plot_time(df_time):
 	else:
 		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP.')
 
+	plt.savefig("images/time_alg({}_{}_{}_{}_{})_iter({})_EDM({}).pdf".format(*algorytmy_lista.values(), iterations, EDM))
 	plt.show()
 
 if __name__ == "__main__":
