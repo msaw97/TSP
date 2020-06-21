@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# Moduł zawierający implementacje algorytmów rozwiązujących problem komiwojażera.
 
 import numpy as np
 from itertools import permutations, combinations
@@ -8,12 +9,10 @@ import graphs
 
 def brute_force(G):
     """Rozwiązuje TSP metodą sprawdzenia wszystkich możliwości.
-    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa;
-    Lista paths zawiera wszystkie możliwe ścieżki w grafie G;
-    Zmienna pathWeight jest sumą wszystkich wag krawędzi ścieżki;
-    Lista bestPath jest ścieżką o najmniejszym koszcie wszystkich krawędzi.
-
+    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa.
     """
+
+    # Zmienna pathWeight jest sumą wszystkich wag krawędzi ścieżki.
     pathWeight = 0
 
     # Znajdowane są wszystkie permutacje n wierzchołków.
@@ -24,6 +23,7 @@ def brute_force(G):
     for n in paths:
         n.append(n[0])
 
+    # Lista bestPath jest ścieżką o najmniejszym koszcie wszystkich krawędzi.
     for r in paths:
         temp_weight = G.get_path_weight(r)
         if temp_weight < pathWeight or pathWeight == 0:
@@ -34,20 +34,23 @@ def brute_force(G):
 
 def NN_ALG(G, current):
     """Algorytm najbliższego sąsiada.
-    Zmienna current oznacza wierzchołek początkowy;
-    Lista visited zawiera odwiedzone już wierzchołki;
-    Lista bestPath zawiera ścieżkę będącą rozwiązaniem;
-    Krotka minimum := (w, j) zawiera indeks jeszcze nieodwiedzonego
-    wierzchołka j oraz wagę krawędzi w łączącą j z ostatnio dodanym
-    wierzchołkiem rozwiązania.
+    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa.
+    Zmienna current oznacza wierzchołek początkowy.
     """
+
+    # Lista bestPath zawiera ścieżkę będącą rozwiązaniem;
     bestPath = [0 for n in range(G.n)]
+    # Lista visited zawiera odwiedzone już wierzchołki;
     visited = [current]
 
     # Znajduje najkrótszą spośród krawędzi
     # łączących aktualny wierzchołek
     # z jeszcze nieodwiedzonymi wierzchołkami.
     for i in range(G.n):
+
+        # Krotka minimum := (w, j) zawiera indeks jeszcze nieodwiedzonego
+        # wierzchołka j oraz wagę krawędzi w, łączącą j z ostatnio dodanym
+        # wierzchołkiem rozwiązania.
         minimum = (0, 0)
         for j in range(len(G[current])):
 
@@ -65,13 +68,19 @@ def NN_ALG(G, current):
     return bestPath, G.get_path_weight(bestPath)
 
 def RNN_ALG(G):
-    """Powtarzalny algorytm najbliższego sąsiada (RNN)."""
+    """Powtarzalny algorytm najbliższego sąsiada (RNN).
+    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa.
+    """
+
+    # Lista bestPath zawiera ścieżkę o najmniejszej wadze z już sprawdzonych ścieżek.
     bestPath = None
     bestPathWeight = 0
 
     for n in range(G.n-1):
+        # Wywoływany jest algorytm najbliższego sąsiada dla każdego n.
         temp_path, temp_weight = NN_ALG(G, n)
 
+        # Porównywana jest obecna najlepsza ścieżka z nowym rozwiązaniem.
         if temp_weight < bestPathWeight or bestPathWeight == 0:
             bestPathWeight = temp_weight
             bestPath = temp_path
@@ -80,11 +89,10 @@ def RNN_ALG(G):
 
 def CI_ALG(G):
     """Algorytm najmniejszej krawędzi (ang. cheapest insertion algorithm)
-    queue - lista krawędzi wraz z ich wagami;
-    solution - graf określony przez liste sąsiedztwa
-    zawierający tylko wierzchołki wchodzące w skład rozwiązania.
+    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa.
     """
 
+    # queue - lista krawędzi wraz z ich wagami;
     # Krawędzie nie powtarzaja się tj. nie wystepuje krawedz (a,b,w) i (b,a,w).
     queue = []
     for n in range(0, G.n-1):
@@ -97,7 +105,7 @@ def CI_ALG(G):
     # Sortowanie kolejki rosnaco według wag.
     queue.sort(key = lambda x: x.w)
 
-    # Tworzony jest graf zawierający rozwiązanie problemu.
+    # Tworzony jest graf określony przez liste sąsiedctwa zawierający rozwiązanie.
     solution = graphs.GraphAdjacencyList(G.n)
 
     edge_count = 0
@@ -115,6 +123,7 @@ def CI_ALG(G):
             solution.add_edge(edge.u.key, edge.v.key)
             edge_count += 1
 
+    # Metoda get_path zwraca ścieżkę w grafie określonym przez listę sąsiedztwa.
     bestPath = solution.get_path()
 
     return bestPath,  G.get_path_weight(bestPath)
@@ -123,13 +132,14 @@ def CI_ALG(G):
 
 def held_karp(G):
     """Algorytm Helda-Karpa
-
-     D jest słownikiem w postaci D[S, p] : (y, parent), gdzie
-     S - zbiór wierzchołków przez które przechodzi ścieżka bez wierzchołka 0;
-     p - ostatni wierzchołek przez który przechodzi ścieżka; 
-     y - suma wszystkich wag krawędzi na ścieżce;
-     parent - indeks przedostatniego wierzchołka na ścieżce.
+    G jest pełnym grafem nieskierowanym w postaci macierzy sąsiedztwa.
     """
+
+    # D jest słownikiem w postaci D[S, p] : (y, parent), gdzie
+    # S - zbiór wierzchołków przez które przechodzi ścieżka bez wierzchołka 0;
+    # p - ostatni wierzchołek przez który przechodzi ścieżka; 
+    # y - suma wszystkich wag krawędzi na ścieżce;
+    # parent - indeks przedostatniego wierzchołka na ścieżce.
     D = {}
 
     # Do rozwiązania dodawane są przypadki trywialne, gdzie zbiór S jest jednoelementowy.

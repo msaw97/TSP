@@ -1,6 +1,17 @@
 #  -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# Główny blok programu. 
+#
+# W celu uruchomienia programu należy określić liczbę wierzchołków grafu N
+# oraz wybrać dodatkowe funkcjonalności. 
+# Spis argumentów programu dostępny jest po wywołaniu: python main.py -h
+# Dodatkowe argumenty należy poprzedzić myślnikiem.
+#
+# Przykład uruchomienia programu w celu rozwiązania TSP dla grafu o 8 wierzchołkach, 
+# o losowych krawędziach spełniających nierówność trojkąta,
+# algorytmem najbliższego sąsiada i algorytmem Helda-Karpa:
+# python main.py 8 -nn -hk -EDM
 
 import graphs
 import algorithms
@@ -34,7 +45,6 @@ else:
 	# domyślna wartość epsilon - 100
 	G.full_randomize(100, args["EDM"])
 
-#G.TEST()
 
 print("Program zawierający algorytmy rozwiązujące problem komiwojażera.")
 #print("Macierz G na której wykonywane są obliczenia: \n{}".format(G))

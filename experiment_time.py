@@ -15,7 +15,7 @@ np.random.seed(seed=12345)
 
 # max_N - Maksymalna liczba, dla której generowane są grafy.
 # Jest ona ustalana w celu stworzenia ramki danych df_time.
-max_N = 20
+max_N = 100
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.

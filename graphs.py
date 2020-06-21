@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# Moduł zawierający implementacje grafów w postaci macierzy i listy sąsiedctwa
+# oraz zdefiniowane dla nich metody.
 
 import numpy as np
 from scipy.spatial import distance
@@ -11,14 +13,6 @@ class GraphAdjacencyMatrix():
     def __init__(self, n):
         self.G = np.zeros((n,n))
         self.n = n
-
-    def TEST(self):
-        """Przykład ze strony http://algorytmy.ency.pl/artykul/algorytm_helda_karpa"""
-        self.G = np.array([[0, 30, 36, 40],
-                        [30, 0, 20, 50],
-                        [36, 20, 0, 67],
-                        [40, 50, 67, 0]])
-        self.n = self.G.shape[0]
 
     def __repr__(self):
         return self.G
@@ -60,29 +54,37 @@ class GraphAdjacencyMatrix():
         """Tworzy pełny graf n wierzchołkow z losowymi wagami."""
 
         def random_uniform(R):
+            """Funkcja generująca liczbę z rozkładu jednostajnego w przedziale od 0 do 1.
+            Następnie wygenerowana liczba jest zaokrąglana do R miejsc po przecinku.
+            """
             return round(np.random.uniform(low=0.0, high=1.0), R)
 
-        # Generuje graf zgodny z metryką euklidesową.
-        # Wszystkie krawędzie grafu spełniają nierówność trójkąta.
+        # Jeśli spełniona jest flaga EDM, to generowany jest graf zgodny z metryką euklidesową.
+        # Wszystkie krawędzie w tym grafie spełniają nierówność trójkąta.
         R = 3
         if EDM: 
             self.G = np.zeros(self.G.shape)
 
+            # Generowane są punkty na płaszczyźnie z rozkładu jednostajnego 
             points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
         
             for i in range(len(points)):
                 for j in range(len(points)):
+                    # Obliczana jest odległość między dwoma punktami.
                     self.G[i][j] = distance.euclidean(points[i], points[j])
 
+            # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
             self.G = self.G * epsilon
 
             return self.G
 
+        # Dla EDM = False generowany jest graf z losowymi krawędziami.
         else:
             self.G = np.zeros(self.G.shape)
             
             for i in range(self.n):
                 for j in range(self.n):
+                    # Generowana jest waga danej krawędzi z rozkładu jednostajnego od 0 do 1.
                     self.G[i][j] = np.random.uniform(low=0.0, high=1.0)
 
             #Tworzy macierz symetryczna
@@ -92,6 +94,7 @@ class GraphAdjacencyMatrix():
 
             np.fill_diagonal(self.G, 0)
 
+            # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
             self.G = self.G * epsilon
 
             return self.G
@@ -135,6 +138,7 @@ class GraphAdjacencyList():
         self.G = [None] * self.v
 
     def add_edge(self, src, dest):
+        """Dodaje krawędź grafu."""
         node = Node(dest)
         node.next = self.G[src]
         self.G[src] = node
@@ -144,6 +148,7 @@ class GraphAdjacencyList():
         self.G[dest] = node
 
     def print_graph(self):
+        """Wyświetla obecną strukure grafu jako wynik w konsoli."""
         for i in range(self.v):
             print("Lista sąsiedztwa wierzchołka {}:\nhead".format(i), end="")
             temp = self.G[i]
@@ -154,7 +159,6 @@ class GraphAdjacencyList():
 
     def size(self, node):
         """Funkcja zwracająca stopień wierzchołka."""
-
         size = 0
         temp = self.G[node]
         while temp:
