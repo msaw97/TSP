@@ -64,28 +64,39 @@ class GraphAdjacencyMatrix():
 
         return sum(pathWeight)
 
-    def full_randomize(self, epsilon, EDM):
+    def calculate_distance_and_set_G(self, array_of_points):
+        """Funkcja obliczająca odległość między wszystkimi punktami z tabeli
+        i zapisująca je w macierzy grafu."""
+        for i in range(len(array_of_points)):
+            for j in range(len(array_of_points)):
+                self.G[i][j] = distance.euclidean(array_of_points[i], array_of_points[j])
+
+        return self.G
+
+    def full_randomize(self, EDM, eps = 1):
         """Tworzy pełny graf n wierzchołkow z losowymi wagami."""
 
         def random_uniform(R):
             """Funkcja generująca liczbę z rozkładu jednostajnego w przedziale od 0 do 1.
-            Następnie wygenerowana liczba jest zaokrąglana do R miejsc po przecinku.
+            Następnie wygenerowana liczba jest mnożona przez 100 i zaokrąglana do R miejsc po przecinku.
             """
-            return round(np.random.uniform(low=0.0, high=1.0), R)
+            return round(100 * np.random.uniform(low=0.0, high=1.0), R)
 
         # Jeśli spełniona jest flaga EDM, to generowany jest graf zgodny z metryką euklidesową.
         # Wszystkie krawędzie w tym grafie spełniają nierówność trójkąta.
-        R = 3
+        # Wygenerowane liczby są zaokrąglane do 2 miejsc po przecinku.
+        R = 2
         if EDM: 
             self.G = np.zeros(self.G.shape)
 
             # Generowane są punkty na płaszczyźnie z rozkładu jednostajnego 
-            points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
-        
-            self.set_G_EDM(points)
+            array_of_points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
+            
+            # Obliczana jest odległość między wszystkimi punktami w tablicy.
+            self.set_G_EDM(array_of_points)
 
             # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
-            self.G = self.G * epsilon
+            self.G = self.G * eps
 
             return self.G
 
@@ -96,7 +107,7 @@ class GraphAdjacencyMatrix():
             for i in range(self.n):
                 for j in range(self.n):
                     # Generowana jest waga danej krawędzi z rozkładu jednostajnego od 0 do 1.
-                    self.G[i][j] = np.random.uniform(low=0.0, high=1.0)
+                    self.G[i][j] = random_uniform(R)
 
             #Tworzy macierz symetryczna
             for i in range(self.n):
@@ -106,7 +117,7 @@ class GraphAdjacencyMatrix():
             np.fill_diagonal(self.G, 0)
 
             # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
-            self.G = self.G * epsilon
+            self.G = self.G * eps
 
             return self.G
 

@@ -17,9 +17,9 @@ np.random.seed(seed=1234)
 # max_N - maksymalna liczba wierzchołków grafu - 1.
 max_N = 13
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
-EDM = True
+EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 60
+iterations = 10
 
 # Lista algorytmów aproksymacyjnych problemu komiwojażera.
 algorytmy_lista = [
@@ -32,13 +32,8 @@ algorytmy_lista = [
 df_error = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], index = np.arange(2, max_N))
 df_error.columns.name = 'N'
 
-def NN_upper_bound(n):
-	return 1/2 * np.ceil(np.log(n)) + 1/2
-
-
 df_max_error = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], index = np.arange(2, max_N))
 df_max_error.columns.name = 'N'
-df_max_error["Max_error_bound"] = [NN_upper_bound(n) for n in np.arange(2, max_N)]
 
 
 def measure_error():
@@ -53,7 +48,7 @@ def measure_error():
 			error_list = [] 
 
 			for i in range(iterations):
-				G.full_randomize(100, EDM)
+				G.full_randomize(EDM)
 
 				# Algorytm Helda-Karpa znajduje opymalny cykl TSP.
 				_, opt_weight = algorithms.held_karp(G)
@@ -111,11 +106,13 @@ def plot_avr_error(df):
 	plt.show()
 
 
-
 if __name__ == '__main__':
 	measure_error()
-	print("Tabela średnego błędu względnego:")
+	
+	print("\nTabela średnego błędu względnego:")
 	print(df_error)
 	print("Tabela maksymalnego błędu względnego:")
 	print(df_max_error)
+	print("EDM:", EDM)
+	print("iterations:", iterations)
 	plot_avr_error(df_error)

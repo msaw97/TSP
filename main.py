@@ -28,7 +28,7 @@ def CLI():
 	parser.add_argument("-ci", "--CI_ALG", action = "store_true", help ="Rozwiązuje TSP algorytmem najbliższej krawędzi.")
 	parser.add_argument("-rnn", "--RNN_ALG", action = "store_true", help = "Rozwiązuje TSP powtarzalnym algorytmem najbliższej krawędzi.")
 	parser.add_argument("-hk", "--held_karp", action = "store_true", help = "Rozwiązuje TSP algorytmem Helda-Karpa.")
-	parser.add_argument("-epsilon", type = float, help = "Określa liczbę zmiennoprzecinkową, przez którą przemnożone będą wszystkie wagi krawędzi grafu.")
+	parser.add_argument("-eps", type = float, help = "Określa liczbę zmiennoprzecinkową, przez którą przemnożone będą wszystkie wagi krawędzi grafu.")
 	parser.add_argument("-EDM", help = "Graf reprezentowany przez macierz z metryką euklidesową.",action = "store_true")
 
 	return vars(parser.parse_args())
@@ -39,19 +39,19 @@ G = graphs.GraphAdjacencyMatrix(args["N"])
 
 # Funkcja full_randomize pozwala,czy macierz sąsiadctwa grafu będzie posiadała metrykę euklidesową oraz
 # wybrać niezerowy skalar, przez który będą przemnożone wszystkie wagi krawędzi grafu.
-if args["epsilon"] and args["epsilon"] > 0:
-	G.full_randomize(args["epsilon"], args["EDM"])
+if args["eps"] and args["eps"] > 0:
+	G.full_randomize(args["EDM"], args["eps"])
 else:
 	# domyślna wartość epsilon - 100
-	G.full_randomize(100, args["EDM"])
+	G.full_randomize(args["EDM"])
 
 
 print("Program zawierający algorytmy rozwiązujące problem komiwojażera.")
-#print("Macierz G na której wykonywane są obliczenia: \n{}".format(G))
+print("Macierz G na której wykonywane są obliczenia: \n{}".format(G))
 
 # Jeśli w argumentach nie określono algorytmów, które program ma wykonać, to wykonywane są wszystkie.
 del args["N"]
-del args["epsilon"]
+del args["eps"]
 del args["EDM"]
 if {"brute_force": False, "NN_ALG": False, "CI_ALG": False, "RNN_ALG": False, "held_karp": False} == args:
 	for x in args:

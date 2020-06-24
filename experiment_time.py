@@ -15,33 +15,34 @@ from scipy import optimize
 
 np.random.seed(seed=1234)
 
-# max_N - Maksymalna liczba, dla której generowane są grafy.
-# Jest ona ustalana w celu stworzenia ramki danych df_time.
-max_N = 200
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 30
+iterations = 10
 
 
 # Słownik zawierający zaimplenentowane algorytmy wraz z przypisaną do nich wartością max_N.
-algorytmy_lista = {
-	algorithms.brute_force : 9,
-	algorithms.NN_ALG : 175,
-	algorithms.RNN_ALG : 125,
-	algorithms.CI_ALG : 175,
-	algorithms.held_karp : 16,
+algorytmy_dict = {
+	algorithms.brute_force : 7,
+	algorithms.NN_ALG : 10,
+	algorithms.RNN_ALG : 10,
+	algorithms.CI_ALG : 10,
+	algorithms.held_karp : 8,
 }
 
+# max_N - Maksymalna liczba, dla której generowane są grafy dla danego algorytmu.
+# Jest ona ustalana w celu stworzenia ramki danych df_time.
+max_N = algorytmy_dict[max(algorytmy_dict, key=algorytmy_dict.get)]
+
 # Ramka danych, w której znajdują się wyniki z eksperymentu.
-df_time = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_lista], index = np.arange(2, max_N))
+df_time = pd.DataFrame(columns = [alg.__name__ for alg in algorytmy_dict], index = np.arange(2, max_N))
 df_time.columns.name = 'N'
 
 
 def measure_time(max_N):
 	"""Funkcja obliczająca czas wykonania algorytmu."""
 	max_N = max_N - 2
-	for alg, k in algorytmy_lista.items():
+	for alg, k in algorytmy_dict.items():
 
 		avr_time_list = []
 		for N in np.arange(2 , k):
@@ -51,7 +52,7 @@ def measure_time(max_N):
 			# Z każdą iteracją wagi krawędzi są ustawane losowo z rozkładu jednostajnego.
 			time_list = []
 			for i in range(iterations):
-				G.full_randomize(100, EDM)
+				G.full_randomize(EDM)
 
 				# Obliczany jest czas wykonania algorytmów.
 				start_time = time.time()
@@ -92,11 +93,18 @@ def plot_time(df_time):
 	else:
 		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP.')
 
-	plt.savefig("images/time_alg({}_{}_{}_{}_{})_iter({})_EDM({}).pdf".format(*algorytmy_lista.values(), iterations, EDM))
+	plt.savefig("images/time_alg({}_{}_{}_{}_{})_iter({})_EDM({}).pdf".format(*algorytmy_dict.values(), iterations, EDM))
 	plt.show()
 
 if __name__ == "__main__":
 	measure_time(max_N)
-	print(df_time)	
-	plot_time(df_time)
 
+	print("\nTabela średnego czasu wykonania algorytmu:")
+	print(df_time)	
+
+	for x,y in algorytmy_dict.items():
+		print("Maksymalne N dla {}: {}".format(x.__name__, y))
+		
+	print("iterations:", iterations)
+	print("EDM:", EDM)
+	plot_time(df_time)
