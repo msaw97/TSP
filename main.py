@@ -25,7 +25,7 @@ def CLI():
 	parser.add_argument("N", type = int, help="Liczba naturalna oznaczająca ilość wierzchołków grafu.")
 	parser.add_argument("-b", "--brute_force", action = "store_true", help = "Rozwiązuje TSP dokładnym algorytmem \"siłowym\".")
 	parser.add_argument("-nn", "--NN_ALG", action = "store_true", help = "Rozwiązuje TSP algorytmem najbliższego sąsiada.")
-	parser.add_argument("-i", "--CI_ALG", action = "store_true", help ="Rozwiązuje TSP algorytmem najbliższej krawędzi.")
+	parser.add_argument("-ci", "--CI_ALG", action = "store_true", help ="Rozwiązuje TSP algorytmem najbliższej krawędzi.")
 	parser.add_argument("-rnn", "--RNN_ALG", action = "store_true", help = "Rozwiązuje TSP powtarzalnym algorytmem najbliższej krawędzi.")
 	parser.add_argument("-hk", "--held_karp", action = "store_true", help = "Rozwiązuje TSP algorytmem Helda-Karpa.")
 	parser.add_argument("-epsilon", type = float, help = "Określa liczbę zmiennoprzecinkową, przez którą przemnożone będą wszystkie wagi krawędzi grafu.")

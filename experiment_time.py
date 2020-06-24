@@ -6,28 +6,30 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import time
 import algorithms
 import graphs
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+from scipy import optimize
 
-np.random.seed(seed=12345)
+np.random.seed(seed=1234)
 
 # max_N - Maksymalna liczba, dla której generowane są grafy.
 # Jest ona ustalana w celu stworzenia ramki danych df_time.
-max_N = 100
+max_N = 200
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 20
+iterations = 30
 
 
 # Słownik zawierający zaimplenentowane algorytmy wraz z przypisaną do nich wartością max_N.
 algorytmy_lista = {
 	algorithms.brute_force : 9,
-	algorithms.NN_ALG : 100,
-	algorithms.RNN_ALG : 60,
-	algorithms.CI_ALG : 80,
+	algorithms.NN_ALG : 175,
+	algorithms.RNN_ALG : 125,
+	algorithms.CI_ALG : 175,
 	algorithms.held_karp : 16,
 }
 
@@ -72,15 +74,19 @@ def measure_time(max_N):
 
 def plot_time(df_time):
 	"""Funkcja rysująca wykres."""
-	ax = plt.gca()
+	ax = plt.figure().gca()
 
 	df_time.plot(kind='line', y='brute_force', color='red', use_index=True, ax=ax)
-	df_time.plot(kind='line', y='NN_ALG', color='blue', use_index=True, ax=ax)
+	df_time.plot(kind='line', y='held_karp', color='black', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='RNN_ALG', color='orange', use_index=True, ax=ax)
 	df_time.plot(kind='line', y='CI_ALG', color='green', use_index=True, ax=ax)
-	df_time.plot(kind='line', y='held_karp', color='black', use_index=True, ax=ax)
+	df_time.plot(kind='line', y='NN_ALG', color='blue', use_index=True, ax=ax)
+
+	# Ustawia wartości osi X na liczby całkowite.
+	ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 	ax.set_xlabel("Liczba wierzchołków grafu N")
 	ax.set_ylabel('Czas (s)')
+	
 	if EDM:
 		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP (EDM).')
 	else:
@@ -93,3 +99,4 @@ if __name__ == "__main__":
 	measure_time(max_N)
 	print(df_time)	
 	plot_time(df_time)
+

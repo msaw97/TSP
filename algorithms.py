@@ -47,22 +47,21 @@ def NN_ALG(G, current):
     # łączących aktualny wierzchołek
     # z jeszcze nieodwiedzonymi wierzchołkami.
     for i in range(G.n):
-
         # Krotka minimum := (w, j) zawiera indeks jeszcze nieodwiedzonego
         # wierzchołka j oraz wagę krawędzi w, łączącą j z ostatnio dodanym
         # wierzchołkiem rozwiązania.
         minimum = (0, 0)
-        for j in range(len(G[current])):
+        for j in range(G.n):
 
             if (j not in visited and
             (0 < G[current][j] < minimum[0] or minimum == (0, 0))):
                 minimum = (G[current][j], j)
 
         current = minimum[1]
-        bestPath[i] = (visited[-1], current)
-        visited.append(minimum[1])
+        bestPath[i] = visited[-1]
+        visited.append(current)
 
-    bestPath = [n[0] for n in bestPath]
+    # Ścieżka łączona jest w cykl
     bestPath.append(bestPath[0])
 
     return bestPath, G.get_path_weight(bestPath)
@@ -76,9 +75,9 @@ def RNN_ALG(G):
     bestPath = None
     bestPathWeight = 0
 
-    for n in range(G.n-1):
+    for i in range(G.n-1):
         # Wywoływany jest algorytm najbliższego sąsiada dla każdego n.
-        temp_path, temp_weight = NN_ALG(G, n)
+        temp_path, temp_weight = NN_ALG(G, i)
 
         # Porównywana jest obecna najlepsza ścieżka z nowym rozwiązaniem.
         if temp_weight < bestPathWeight or bestPathWeight == 0:

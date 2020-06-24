@@ -7,12 +7,15 @@
 import numpy as np
 from scipy.spatial import distance
 
-
 class GraphAdjacencyMatrix():
     """Reprezentacja grafu nieskierowanego w postaci macierzy sąsiedztwa."""
-    def __init__(self, n):
-        self.G = np.zeros((n,n))
-        self.n = n
+    def __init__(self, n, custom = None):
+        if custom is None:
+            self.G = np.zeros((n,n))
+            self.n = n
+        else:
+            self.G = custom
+            self.n = n
 
     def __repr__(self):
         return self.G
@@ -26,6 +29,17 @@ class GraphAdjacencyMatrix():
     def __iter__(self):
         for i in self.G:
             yield i
+
+    def set_G(self, array):
+        self.G = array
+        self.n = self.G.shape
+
+    def set_G_EDM(self, array_of_points):
+        """Funkcja obliczająca odległość między wszystkimi punktami z tabeli
+        i zapisująca je w macierzy grafu."""
+        for i in range(len(array_of_points)):
+            for j in range(len(array_of_points)):
+                self.G[i][j] = distance.euclidean(array_of_points[i], array_of_points[j])
 
     def add_edge(self, u, v, w):
         """Dodaje krawędź z wierzchołka u do v z wagą w."""
@@ -68,10 +82,7 @@ class GraphAdjacencyMatrix():
             # Generowane są punkty na płaszczyźnie z rozkładu jednostajnego 
             points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
         
-            for i in range(len(points)):
-                for j in range(len(points)):
-                    # Obliczana jest odległość między dwoma punktami.
-                    self.G[i][j] = distance.euclidean(points[i], points[j])
+            self.set_G_EDM(points)
 
             # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
             self.G = self.G * epsilon
