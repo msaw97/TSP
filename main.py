@@ -21,15 +21,18 @@ import argparse
 
 def CLI():
 	"""Interfejs linii komend programu."""
-	parser=argparse.ArgumentParser(description = "Program rozwiązujący problem komiwojażera za pomocą algorytmu dokładnego i wybranych algorymów rozwiązania przybliżonego.", prog = "TSP")
+	parser=argparse.ArgumentParser(description = "Program rozwiązujący problem komiwojażera za pomocą algorytmu dokładnego " +
+	"i wybranych algorymów rozwiązania przybliżonego. " +
+	"Autor: Miłosz Sawicki " +
+	"Przykładowe wywołanie w konsoli: python main.py 8 -b -ci -hk", prog = "TSP")
 	parser.add_argument("N", type = int, help="Liczba naturalna oznaczająca ilość wierzchołków grafu.")
 	parser.add_argument("-b", "--brute_force", action = "store_true", help = "Rozwiązuje TSP dokładnym algorytmem \"siłowym\".")
 	parser.add_argument("-nn", "--NN_ALG", action = "store_true", help = "Rozwiązuje TSP algorytmem najbliższego sąsiada.")
 	parser.add_argument("-ci", "--CI_ALG", action = "store_true", help ="Rozwiązuje TSP algorytmem najbliższej krawędzi.")
 	parser.add_argument("-rnn", "--RNN_ALG", action = "store_true", help = "Rozwiązuje TSP powtarzalnym algorytmem najbliższej krawędzi.")
-	parser.add_argument("-hk", "--held_karp", action = "store_true", help = "Rozwiązuje TSP algorytmem Helda-Karpa.")
+	parser.add_argument("-hk", "--held_karp", action = "store_true", help = "Rozwiązuje TSP dokładnym algorytmem Helda-Karpa.")
 	parser.add_argument("-eps", type = float, help = "Określa liczbę zmiennoprzecinkową, przez którą przemnożone będą wszystkie wagi krawędzi grafu.")
-	parser.add_argument("-EDM", help = "Graf reprezentowany przez macierz z metryką euklidesową.",action = "store_true")
+	parser.add_argument("-EDM", help = "Graf zgodny z metryką euklidesową.",action = "store_true")
 
 	return vars(parser.parse_args())
 
@@ -47,7 +50,7 @@ else:
 
 
 print("Program zawierający algorytmy rozwiązujące problem komiwojażera.")
-print("Macierz G na której wykonywane są obliczenia: \n{}".format(G))
+#print("Macierz G na której wykonywane są obliczenia: \n{}".format(G))
 
 # Jeśli w argumentach nie określono algorytmów, które program ma wykonać, to wykonywane są wszystkie.
 del args["N"]

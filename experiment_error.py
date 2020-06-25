@@ -14,12 +14,12 @@ from matplotlib.ticker import MaxNLocator
 
 np.random.seed(seed=1234)
 
-# max_N - maksymalna liczba wierzchołków grafu - 1.
-max_N = 13
+# max_N to maksymalna liczba wierzchołków grafu - 1.
+max_N = 20
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
 EDM = False
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 10
+iterations = 35
 
 # Lista algorytmów aproksymacyjnych problemu komiwojażera.
 algorytmy_lista = [
@@ -108,7 +108,7 @@ def plot_avr_error(df):
 
 if __name__ == '__main__':
 	measure_error()
-	
+
 	print("\nTabela średnego błędu względnego:")
 	print(df_error)
 	print("Tabela maksymalnego błędu względnego:")

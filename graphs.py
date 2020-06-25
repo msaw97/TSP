@@ -34,13 +34,6 @@ class GraphAdjacencyMatrix():
         self.G = array
         self.n = self.G.shape
 
-    def set_G_EDM(self, array_of_points):
-        """Funkcja obliczająca odległość między wszystkimi punktami z tabeli
-        i zapisująca je w macierzy grafu."""
-        for i in range(len(array_of_points)):
-            for j in range(len(array_of_points)):
-                self.G[i][j] = distance.euclidean(array_of_points[i], array_of_points[j])
-
     def add_edge(self, u, v, w):
         """Dodaje krawędź z wierzchołka u do v z wagą w."""
         if u != v:
@@ -71,8 +64,6 @@ class GraphAdjacencyMatrix():
             for j in range(len(array_of_points)):
                 self.G[i][j] = distance.euclidean(array_of_points[i], array_of_points[j])
 
-        return self.G
-
     def full_randomize(self, EDM, eps = 1):
         """Tworzy pełny graf n wierzchołkow z losowymi wagami."""
 
@@ -85,7 +76,7 @@ class GraphAdjacencyMatrix():
         # Jeśli spełniona jest flaga EDM, to generowany jest graf zgodny z metryką euklidesową.
         # Wszystkie krawędzie w tym grafie spełniają nierówność trójkąta.
         # Wygenerowane liczby są zaokrąglane do 2 miejsc po przecinku.
-        R = 2
+        R = 3
         if EDM: 
             self.G = np.zeros(self.G.shape)
 
@@ -93,7 +84,7 @@ class GraphAdjacencyMatrix():
             array_of_points = [ (random_uniform(R), random_uniform(R)) for i in range(self.n)]
             
             # Obliczana jest odległość między wszystkimi punktami w tablicy.
-            self.set_G_EDM(array_of_points)
+            self.calculate_distance_and_set_G(array_of_points)
 
             # Wszystkie wagi krawędzi grafu mnożone są przez niezerowy skalar epsilon.
             self.G = self.G * eps

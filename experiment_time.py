@@ -13,21 +13,21 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from scipy import optimize
 
-np.random.seed(seed=1234)
+np.random.seed(seed=123)
 
 # Ustawienie zmiennej logicznej EDM na True spowoduje generowanie grafów zgodnych z metryką euklidesową.
-EDM = False
+EDM = True
 # Zmienna iterations oznacza ilość losowo generowanych grafów dla danej liczby wierzchołków N.
-iterations = 10
+iterations = 35
 
 
 # Słownik zawierający zaimplenentowane algorytmy wraz z przypisaną do nich wartością max_N.
 algorytmy_dict = {
-	algorithms.brute_force : 7,
-	algorithms.NN_ALG : 10,
-	algorithms.RNN_ALG : 10,
-	algorithms.CI_ALG : 10,
-	algorithms.held_karp : 8,
+	algorithms.brute_force : 10,
+	algorithms.NN_ALG : 350,
+	algorithms.RNN_ALG : 140,
+	algorithms.CI_ALG : 350,
+	algorithms.held_karp : 17,
 }
 
 # max_N - Maksymalna liczba, dla której generowane są grafy dla danego algorytmu.
