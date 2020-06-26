@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# 26.06.20
 # Moduł zawierający implementacje grafów w postaci macierzy i listy sąsiedctwa
 # oraz zdefiniowane dla nich metody.
 
@@ -76,7 +77,7 @@ class GraphAdjacencyMatrix():
         # Jeśli spełniona jest flaga EDM, to generowany jest graf zgodny z metryką euklidesową.
         # Wszystkie krawędzie w tym grafie spełniają nierówność trójkąta.
         # Wygenerowane liczby są zaokrąglane do 2 miejsc po przecinku.
-        R = 3
+        R = 2
         if EDM: 
             self.G = np.zeros(self.G.shape)
 

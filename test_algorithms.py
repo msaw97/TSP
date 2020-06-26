@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# 26.06.20
 # Program zawierający zestaw testów jednostkowych sprawdzających algorytmy rozwiązujące problem komiwojażera.
 
 import unittest

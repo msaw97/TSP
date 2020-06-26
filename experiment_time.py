@@ -93,6 +93,7 @@ def plot_time(df_time):
 	else:
 		ax.set_title('Średni czas wykonania algorytmów rozwiązujących TSP.')
 
+	# Wykres zapisywany jest do folderu images, który musi znajdywać w folderze programu.
 	plt.savefig("images/time_alg({}_{}_{}_{}_{})_iter({})_EDM({}).pdf".format(*algorytmy_dict.values(), iterations, EDM))
 	plt.show()
 

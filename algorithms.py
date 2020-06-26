@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# 26.06.20
 # Moduł zawierający implementacje algorytmów rozwiązujących problem komiwojażera.
 
 import numpy as np
@@ -75,7 +76,7 @@ def RNN_ALG(G):
     bestPath = None
     bestPathWeight = 0
 
-    for i in range(G.n-1):
+    for i in range(G.n):
         # Wywoływany jest algorytm najbliższego sąsiada dla każdego n.
         temp_path, temp_weight = NN_ALG(G, i)
 

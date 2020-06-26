@@ -102,6 +102,7 @@ def plot_avr_error(df):
 	ax.set_xlabel("Liczba wierzchołków grafu N")  
 	ax.set_ylabel('Błąd względny')
 	plt.legend()
+	# Wykres zapisywany jest do folderu images, który musi znajdywać w folderze programu.
 	plt.savefig("images/error_maxN({})_iter({})_EDM({}).pdf".format(max_N, iterations, EDM))
 	plt.show()
 

@@ -1,6 +1,7 @@
 #  -*- coding: utf-8 -*-
 # Autor: Miłosz Sawicki
 # Licencja: GNU GPL
+# 26.06.20
 # Główny blok programu. 
 #
 # W celu uruchomienia programu należy określić liczbę wierzchołków grafu N
