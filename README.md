@@ -7,8 +7,8 @@ My work on Travelling Salesman Problem and its approximation algorithms.
 - obligatory argument N sets number the of vertices of a graph;
 - -b solves generated TSP instance with brute force algorithm;
 - -nn solves generated TSP instance with nearest neighbor algorithm;
-- -ci solves generated TSP instance with cheapest instance algorithm;
-- -rnn solves generated TSP instance with repetitive nearest neighbor;
+- -ci solves generated TSP instance with cheapest insertion algorithm;
+- -rnn solves generated TSP instance with repetitive nearest neighbor algorithm;
 - -hk solves generated TSP instance with accurate Held-Karp algorithm;
 - -EDM sets generated graph edges to satisfy the triangular inequality;
 - -eps sets some given scalar EPS which multiplies all of the graph edges weights.
